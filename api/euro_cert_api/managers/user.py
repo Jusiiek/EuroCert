@@ -4,11 +4,13 @@ from typing import Any, Optional
 from bson import ObjectId
 
 from euro_cert_api.models.user import User
+from euro_cert_api.utils.password import PasswordHelper
 
 
 class UserManager:
-    def __init__(self):
-        pass
+
+    def __init__(self, password_helper: PasswordHelper = None):
+        self.password_helper = password_helper or PasswordHelper()
 
     def parse_id(self, id: Any) -> ObjectId:
         """
