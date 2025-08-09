@@ -11,6 +11,7 @@ beanie==2.0.0
 fastapi==0.116.1
 idna==3.10
 motor==3.7.1
+passlib==1.7.4
 python-jose[cryptography]
 pydantic==2.11.7
 pydantic_core==2.33.2
