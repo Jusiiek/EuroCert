@@ -7,8 +7,8 @@ from euro_cert_api.models.user import User
 
 
 class UserManager:
-    def __init__(self, user=None):
-        self.user = user
+    def __init__(self):
+        pass
 
     def parse_id(self, id: Any) -> ObjectId:
         """
@@ -55,7 +55,6 @@ class UserManager:
         if user is None:
             raise Exception(f"User {user_id} not found")
 
-        self.user = user
         return user
 
     async def get_by_email(self, email: str) -> Optional[User]:
@@ -63,13 +62,12 @@ class UserManager:
         if user is None:
             raise Exception(f"User with email {email} not found")
 
-        self.user = user
         return user
 
     async def create(self, user_create: dict) -> User:
         pass
 
-    async def update(self, update_dict: dict) -> User:
+    async def update(self, update_dict: dict, user: User) -> User:
         pass
 
     async def delete(self, user: User) -> None:
