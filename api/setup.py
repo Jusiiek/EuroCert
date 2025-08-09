@@ -9,6 +9,7 @@ annotated-types==0.7.0
 anyio==4.10.0
 fastapi==0.116.1
 idna==3.10
+motor==3.7.1
 pydantic==2.11.7
 pydantic_core==2.33.2
 sniffio==1.3.1
