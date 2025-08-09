@@ -1,3 +1,5 @@
+from bson import ObjectId
+
 from euro_cert_api.models.base import Base
 
 
@@ -11,9 +13,9 @@ class User(Base):
 
 
     @classmethod
-    async def get_by_id(cls, user_id):
+    async def get_by_id(cls, user_id: ObjectId):
         return await cls.filter(id=user_id).first()
 
     @classmethod
-    async def get_by_email(cls, email):
+    async def get_by_email(cls, email: str):
         return await cls.filter(email=email).first()
