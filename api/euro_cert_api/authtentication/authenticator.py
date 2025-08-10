@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import Depends
+from fastapi import Depends, status, HTTPException
 
 from euro_cert_api.authtentication.strategy.jwt import JWTStrategy
 from euro_cert_api.managers.user import UserManager
@@ -27,7 +27,22 @@ class Authenticator:
         token: str = None,
         is_active: bool = False,
     ) -> tuple[Optional[User], Optional[str]]:
-        pass
+
+        user: Optional[User] = None
+        status_code = status.HTTP_401_UNAUTHORIZED
+
+        if token is not None:
+            user = await self.strategy.read_token(token, self.user_manager)
+
+        if user is not None:
+            if is_active and not user.is_active:
+                status_code = status.HTTP_401_UNAUTHORIZED
+                user = None
+
+        if not user:
+            raise HTTPException(status_code=status_code)
+
+        return user, token
 
     def get_current_user_and_token(self, is_active: bool = False):
         async def current_user_and_token_dependency(
