@@ -1,6 +1,9 @@
 from typing import Optional
 
+from fastapi import Header, HTTPException
+
 from euro_cert_api.models.user import User
+from euro_cert_api.models.blacklist_token import BlacklistToken
 from euro_cert_api.managers.user import UserManager
 from euro_cert_api.utils.jwt import (
     SecretType,
@@ -8,6 +11,7 @@ from euro_cert_api.utils.jwt import (
     decode_jwt,
     generate_jwt
 )
+
 
 class JWTStrategy:
     def __init__(
@@ -58,3 +62,16 @@ class JWTStrategy:
             self.lifetime,
             self.algorithm,
         )
+
+    async def destroy_token(self, token: str):
+        await BlacklistToken.create(token=token)
+
+    async def get_token(
+        self,
+        authorization: str = Header(None)
+    ):
+        if not authorization or not authorization.startswith("Bearer "):
+            raise HTTPException(
+                status_code=401, detail="Invalid or missing authorization token"
+            )
+        return authorization[len("Bearer "):]
