@@ -15,7 +15,7 @@ class AuthenticationBackend:
         token = await self.strategy.write_token(user)
         return await self.transport.get_login_response(token)
 
-    async def logout(self, token) -> Response:
+    async def logout(self, token: str) -> Response:
         await self.strategy.destroy_token(token)
         try:
             response = await self.transport.get_logout_response()

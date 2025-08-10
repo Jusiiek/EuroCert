@@ -16,7 +16,7 @@ class Authenticator:
         pass
 
     def get_current_user_and_token(self, is_active: bool = False):
-        async def current_user_and_token_dependency(token: str) -> tuple[Optional[str], Optional[str]]:
+        async def current_user_and_token_dependency(token: str) -> tuple[Optional[User], Optional[str]]:
             return await self._authenticate(token=token, is_active=is_active)
 
         return current_user_and_token_dependency

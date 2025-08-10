@@ -3,6 +3,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from euro_cert_api.authtentication.authenticator import Authenticator
 from euro_cert_api.authtentication.backend import AuthenticationBackend
 from euro_cert_api.managers.user import UserManager
+from euro_cert_api.models.user import User
 from euro_cert_api.schemas.auth import AuthCredentials
 
 
@@ -13,12 +14,10 @@ def get_auth_router(
 ) -> APIRouter:
 
     router = APIRouter(prefix="/auth", tags=["auth"])
-
     get_current_user_and_token = authenticator.get_current_user_and_token()
 
-    @router.post(
-        "/login",
-    )
+
+    @router.post("/login")
     async def login(credentials: AuthCredentials):
         user = await user_manager.authenticate(credentials)
 
@@ -36,6 +35,11 @@ def get_auth_router(
 
         return await authentication_backend.login(user)
 
+
+    @router.post("/logout")
+    async def logout(user_and_token: tuple[User, str] = Depends(get_current_user_and_token)):
+        _, token = user_and_token
+        return await authentication_backend.logout(token)
 
 
     return router
