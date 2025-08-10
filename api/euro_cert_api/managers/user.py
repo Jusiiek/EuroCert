@@ -4,11 +4,18 @@ from typing import Any, Optional
 from bson import ObjectId
 
 from euro_cert_api.models.user import User
+from euro_cert_api.utils.password import PasswordHelper
+from euro_cert_api.common import exceptions
+from euro_cert_api.schemas.user import (
+    CreateUserSchema,
+    UpdateUserSchema,
+)
 
 
 class UserManager:
-    def __init__(self):
-        pass
+
+    def __init__(self, password_helper: PasswordHelper = None):
+        self.password_helper = password_helper or PasswordHelper()
 
     def parse_id(self, id: Any) -> ObjectId:
         """
@@ -53,22 +60,51 @@ class UserManager:
     async def get_by_id(self, user_id: ObjectId) -> Optional[User]:
         user: Optional[User] = await User.get_by_id(user_id)
         if user is None:
-            raise Exception(f"User {user_id} not found")
+            raise exceptions.UserNotExists()
 
         return user
 
     async def get_by_email(self, email: str) -> Optional[User]:
         user: Optional[User] = await User.get_by_email(email)
         if user is None:
-            raise Exception(f"User with email {email} not found")
+            raise exceptions.UserNotExists()
 
         return user
 
-    async def create(self, user_create: dict) -> User:
-        pass
+    async def create(self, user_create: CreateUserSchema) -> User:
+        errors, is_pass_valid = await self._validate_password(user_create.password)
+        if not is_pass_valid:
+            raise exceptions.InvalidPasswordException(', '.join(errors))
 
-    async def update(self, update_dict: dict, user: User) -> User:
-        pass
+        if await self.get_by_email(user_create.email):
+            raise exceptions.UserAlreadyExists()
+
+        user_dict = user_create.create_update_dict()
+        user = await User.create(**user_dict)
+        return user
+
+    async def update(self, user_update: UpdateUserSchema, user: User) -> User:
+        update_dict = user_update.create_update_dict()
+
+        for field, value in update_dict.items():
+            if field == "email" and value != user.email:
+                if await self.get_by_email(value):
+                    raise exceptions.UserAlreadyExists()
+                else:
+                    setattr(user, field, value)
+            elif field == "password" and value is not None:
+                errors, is_pass_valid = await self._validate_password(value)
+                if is_pass_valid:
+                    hashed_pass = self.password_helper.hash_password(
+                        value
+                    )
+                    setattr(user, field, hashed_pass)
+                else:
+                    raise exceptions.InvalidPasswordException(', '.join(errors))
+            else:
+                setattr(user, field, value)
+            await user.save()
+            return user
 
     async def delete(self, user: User) -> None:
         return await user.delete()
