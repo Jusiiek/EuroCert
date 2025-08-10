@@ -81,6 +81,8 @@ class UserManager:
             raise exceptions.UserAlreadyExists()
 
         user_dict = user_create.create_update_dict()
+        user_dict["hashed_password"] = self.password_helper.hash_password(user_create.password)
+        del user_dict["password"]
         user = await User.create(**user_dict)
         return user
 
@@ -99,7 +101,7 @@ class UserManager:
                     hashed_pass = self.password_helper.hash_password(
                         value
                     )
-                    setattr(user, field, hashed_pass)
+                    setattr(user, "hashed_password", hashed_pass)
                 else:
                     raise exceptions.InvalidPasswordException(', '.join(errors))
             else:
