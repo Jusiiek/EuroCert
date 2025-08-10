@@ -7,6 +7,13 @@ from euro_cert_api.models.user import User
 
 
 class AuthenticationBackend:
+    """
+    It's provide a full authentication mechanism
+
+    :param transport: Transport - A transport instance.
+    :param strategy: JWTStrategy - A jwt strategy instance.
+
+    """
     def __init__(self, transport: Transport, strategy: JWTStrategy):
         self.transport = transport
         self.strategy = strategy
