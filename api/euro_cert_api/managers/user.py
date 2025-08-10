@@ -10,6 +10,7 @@ from euro_cert_api.schemas.user import (
     CreateUserSchema,
     UpdateUserSchema,
 )
+from euro_cert_api.schemas.auth import AuthCredentials
 
 
 class UserManager:
@@ -110,7 +111,7 @@ class UserManager:
         return await user.delete()
 
     async def authenticate(
-            self,
-            credentials: dict
+        self,
+        credentials: AuthCredentials
     ) -> Optional[User]:
         pass
