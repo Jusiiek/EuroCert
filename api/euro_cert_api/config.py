@@ -8,4 +8,5 @@ DB_NAME = os.getenv('DB_NAME', 'euro_cert')
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'secret')
 TOKEN_LIFETIME = 60 * 60 * 24 # day
+AUDIENCE: list[str] = ["euro_cert:auth"],
 ORIGINS = ["localhost:3000"]
