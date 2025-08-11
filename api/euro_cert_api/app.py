@@ -2,11 +2,14 @@ import uvicorn
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
+from euro_cert_api.middleware import jwt_middleware
+
 
 def create_app() -> FastAPI:
     app = FastAPI()
 
     origins = ["localhost:3000"]
+    app.middleware("http")(jwt_middleware)
 
     app.add_middleware(
         CORSMiddleware,
