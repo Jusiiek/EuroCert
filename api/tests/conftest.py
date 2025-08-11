@@ -166,5 +166,3 @@ def inactive_user() -> UserModel:
         id=uuid.UUID("0cc735ff-39f8-4b63-b08e-c50a9adbf709"),
         is_active=False
     )
-
-
