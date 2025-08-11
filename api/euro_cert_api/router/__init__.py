@@ -9,23 +9,23 @@ class Router:
     The final instance that stores routers and their required parameters
 
     :param authenticator: Authenticator - Authenticator instance
-    :param authentication_backend: AuthenticationBackend - AuthenticationBackend instance
+    :param backend: AuthenticationBackend - AuthenticationBackend instance
     :param user_manager: UserManager - UserManager instance
     """
 
     def __init__(
             self,
             authenticator: Authenticator,
-            authentication_backend: AuthenticationBackend,
+            backend: AuthenticationBackend,
             user_manager: UserManager
     ):
         self.authenticator = authenticator
-        self.authentication_backend = authentication_backend
+        self.backend = backend
         self.user_manager = user_manager
 
     def get_auth_router(self):
         return get_auth_router(
             self.authenticator,
-            self.authentication_backend,
+            self.backend,
             self.user_manager
         )
