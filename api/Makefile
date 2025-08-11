@@ -1,3 +1,6 @@
+dev_run:
+	@python -m euro_cert_api.app
+
 dev_install:
 	@pip install -e .
 

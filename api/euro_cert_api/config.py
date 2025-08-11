@@ -10,3 +10,6 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'secret')
 TOKEN_LIFETIME = 60 * 60 * 24 # day
 AUDIENCE: list[str] = ["euro_cert:auth"],
 ORIGINS = ["localhost:3000"]
+
+HOST = os.getenv('HOST', '0.0.0.0')
+PORT = os.getenv('PORT', 8000)
