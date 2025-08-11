@@ -1,16 +1,21 @@
+import os
 import json
 
 from euro_cert_api.config import FIXTURES_PATH
-from euro_cert_api.managers.user import UserManager
-from euro_cert_api.schemas.user import CreateUserSchema
+from euro_cert_api.models.user import User
+from euro_cert_api.utils.password import PasswordHelper
 
 
 async def load_users():
-    user_manager = UserManager()
+    password_helper = PasswordHelper()
 
-    with open(f'{FIXTURES_PATH}/users.json') as f:
+    with open(
+        os.path.join(FIXTURES_PATH, "users.json")
+    ) as f:
         users = json.load(f)
 
     for user in users:
-        create_schema = CreateUserSchema(**user)
-        await user_manager.create(create_schema)
+        user["hashed_password"] = password_helper.hash_password(user["password"])
+        del user["password"]
+        user = User(**user)
+        await user.insert()

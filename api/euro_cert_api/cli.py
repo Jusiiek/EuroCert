@@ -3,7 +3,7 @@ import asyncio
 from functools import wraps
 
 from euro_cert_api.utils.fixtures import load_users
-from euro_cert_api.db import init_db
+from euro_cert_api.db import reset_db, init_db
 
 
 def coroutine(f):
@@ -18,6 +18,12 @@ def coroutine(f):
 @click.group()
 def cli():
     """This is a management script for euro cert api."""
+
+
+@cli.command()
+@coroutine
+async def reset_database():
+    await reset_db()
 
 
 @cli.command()

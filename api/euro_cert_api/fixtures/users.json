@@ -6,5 +6,10 @@
   {
     "email": "elisabeth_test_email@test.com",
     "password": "3L&sabeth123456"
+  },
+  {
+    "email": "inactive_user@test.com",
+    "password": "3L&sabeth123456",
+    "is_active": false
   }
 ]

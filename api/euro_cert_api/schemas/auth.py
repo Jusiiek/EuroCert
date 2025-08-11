@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from euro_cert_api.utils.models import CreateUpdateDictModel
 
 
-class AuthCredentials(BaseModel):
+class AuthCredentials(CreateUpdateDictModel):
     email: str
     password: str

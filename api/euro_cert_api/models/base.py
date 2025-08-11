@@ -1,9 +1,8 @@
 from bson import ObjectId
 from beanie import Document
-from euro_cert_api.utils.models import CreateUpdateDictModel
 
 
-class Base(Document, CreateUpdateDictModel):
+class Base(Document):
 
     class Config:
         populate_defaults = True
