@@ -8,6 +8,7 @@ requirements = """
 annotated-types==0.7.0
 anyio==4.10.0
 beanie==2.0.0
+bcrypt==4.3.0
 fastapi==0.116.1
 idna==3.10
 motor==3.7.1
@@ -15,6 +16,8 @@ passlib==1.7.4
 python-jose[cryptography]
 pydantic==2.11.7
 pydantic_core==2.33.2
+pytest==8.4.1
+pytest-asyncio==1.1.0
 sniffio==1.3.1
 starlette==0.47.2
 typing-inspection==0.4.1
