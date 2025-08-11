@@ -3,17 +3,18 @@ from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
 
 from euro_cert_api.middleware import jwt_middleware
+from euro_cert_api.db import init_db
+from euro_cert_api.config import ORIGINS
 
 
 def create_app() -> FastAPI:
     app = FastAPI()
 
-    origins = ["localhost:3000"]
     app.middleware("http")(jwt_middleware)
 
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=origins,
+        allow_origins=ORIGINS,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
@@ -22,7 +23,13 @@ def create_app() -> FastAPI:
 
     return app
 
+
 app = create_app()
+
+
+@app.on_event("startup")
+async def start_db():
+    await init_db()
 
 
 def run_dev_server():
