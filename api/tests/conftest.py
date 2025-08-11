@@ -1,9 +1,11 @@
 import uuid
 import dataclasses
-from typing import Optional
+from typing import Optional, List, Any
 
 import pytest
 from pydantic import UUID4
+from fastapi.security.base import SecurityBase
+from fastapi import Request
 
 from euro_cert_api.managers.user import UserManager
 from euro_cert_api.authtentication.authenticator import Authenticator
@@ -22,7 +24,6 @@ IDType = UUID4
 password_helper = PasswordHelper()
 josh_password_hash = password_helper.hash_password('12Qwerty!@')
 elisabeth_password_hash = password_helper.hash_password('elisabeth')
-paul_password_hash = password_helper.hash_password('paulo2134')
 
 
 @dataclasses.dataclass
@@ -33,10 +34,15 @@ class UserModel:
     is_active: bool = True
 
 
+class MockSecurityScheme(SecurityBase):
+    def __call__(self, request: Request) -> Optional[str]:
+        return "mock"
+
 
 class MockTransport(Transport):
-    def __init__(self, tokenUrl: str):
-        super().__init__(tokenUrl)
+    def __init__(self):
+        super().__init__("mock")
+        self.scheme = MockSecurityScheme()
 
 
 class MockStrategy(JWTStrategy):
@@ -46,7 +52,7 @@ class MockStrategy(JWTStrategy):
             try:
                 parsed_id = user_manager.parse_id(token)
                 return await user_manager.get_by_id(parsed_id)
-            except Exception:
+            except Exception as e:
                 return None
         return None
 
@@ -58,6 +64,30 @@ class MockStrategy(JWTStrategy):
 
 
 class MockUserManager(UserManager):
+
+    def __init__(self, password_helper: PasswordHelper = None):
+        super().__init__(password_helper)
+        self._users: List[UserModel] = [
+            UserModel(
+                email='josh_test_email@test.com',
+                hashed_password=josh_password_hash,
+                id=uuid.UUID("5b7827a7-6c8d-4b7a-926d-0b2ac7af7d7e")
+            ),
+            UserModel(
+                email='elisabeth_test_email@test.com',
+                hashed_password=elisabeth_password_hash,
+                id=uuid.UUID("0cc735ff-39f8-4b63-b08e-c50a9adbf709"),
+                is_active=False
+            )
+        ]
+
+    def parse_id(self, id: Any) -> IDType:
+        return str(id)
+
+    async def get_by_id(self, id: str) -> Optional[UserModel]:
+        user = [u for u in self._users if str(u.id) == id][0] or None
+        return user
+
     async def _validate_password(self, password: str) -> None:
         if len(password) < 4:
             raise exceptions.InvalidPasswordException(
@@ -66,10 +96,13 @@ class MockUserManager(UserManager):
 
     async def create_user(self, create_user: CreateUserSchema) -> UserModel:
         await self._validate_password(create_user.password)
-        return UserModel(
+
+        created_user = UserModel(
             email=create_user.email,
             hashed_password=self.password_helper.hash_password(create_user.password),
             )
+        self._users.append(created_user)
+        return created_user
 
     async def update(self, user_update: UpdateUserSchema, user: UserModel) -> UserModel:
         pass
@@ -98,9 +131,7 @@ def strategy() -> JWTStrategy:
 
 @pytest.fixture
 def transport() -> Transport:
-    return MockTransport(
-        "test/auth"
-    )
+    return MockTransport()
 
 
 @pytest.fixture
@@ -122,7 +153,8 @@ def authentication_backend(transport, strategy) -> AuthenticationBackend:
 def user() -> UserModel:
     return UserModel(
         email='josh_test_email@test.com',
-        hashed_password=josh_password_hash
+        hashed_password=josh_password_hash,
+        id=uuid.UUID("5b7827a7-6c8d-4b7a-926d-0b2ac7af7d7e")
     )
 
 
@@ -131,6 +163,7 @@ def inactive_user() -> UserModel:
     return UserModel(
         email='elisabeth_test_email@test.com',
         hashed_password=elisabeth_password_hash,
+        id=uuid.UUID("0cc735ff-39f8-4b63-b08e-c50a9adbf709"),
         is_active=False
     )
 
