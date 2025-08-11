@@ -36,5 +36,11 @@ setup(
     author="Jakub Z",
     packages=find_packages(),
     install_requires=requirements,
-    python_requires='>=3.12'
+    python_requires='>=3.12',
+    # Defines all cli commands with package.
+    entry_points={
+        "console_scripts": [
+            "euro_cert_api_cli = euro_cert_api.cli:cli",
+        ]
+    },
 )
