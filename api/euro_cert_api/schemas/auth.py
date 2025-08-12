@@ -1,6 +1,6 @@
-from euro_cert_api.utils.models import CreateUpdateDictModel
+from euro_cert_api.schemas.user import CreateUserSchema
 
 
-class AuthCredentials(CreateUpdateDictModel):
+class AuthCredentials(CreateUserSchema):
     email: str
     password: str

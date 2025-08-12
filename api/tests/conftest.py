@@ -1,4 +1,5 @@
 import uuid
+import asyncio
 import dataclasses
 from typing import Optional, List, Any
 
@@ -6,6 +7,7 @@ import pytest
 from pydantic import UUID4
 from fastapi.security.base import SecurityBase
 from fastapi import Request
+from fastapi.testclient import TestClient
 
 from euro_cert_api.managers.user import UserManager
 from euro_cert_api.authtentication.authenticator import Authenticator
@@ -14,9 +16,14 @@ from euro_cert_api.authtentication.backend import AuthenticationBackend
 from euro_cert_api.authtentication.strategy.jwt import JWTStrategy
 from euro_cert_api.models.user import User
 from euro_cert_api.utils.password import PasswordHelper
-from euro_cert_api.schemas.user import CreateUserSchema, UpdateUserSchema
+from euro_cert_api.schemas.user import CreateUserSchema
 from euro_cert_api.schemas.auth import AuthCredentials
 from euro_cert_api.common import exceptions
+from euro_cert_api.app import app
+
+
+loop = asyncio.get_event_loop()
+client = TestClient(app)
 
 
 IDType = UUID4
@@ -86,6 +93,15 @@ class MockUserManager(UserManager):
 
     async def get_by_id(self, id: str) -> Optional[UserModel]:
         user = [u for u in self._users if str(u.id) == id][0] or None
+        if user is None:
+            raise exceptions.UserNotExists()
+        return user
+
+    async def get_by_email(self, email: str) -> Optional[UserModel]:
+        user = [u for u in self._users if u.email == email]
+        user = user[0] if len(user) > 0 else None
+        if user is None:
+            raise exceptions.UserNotExists()
         return user
 
     async def _validate_password(self, password: str) -> None:
@@ -94,31 +110,38 @@ class MockUserManager(UserManager):
                 "Password must be at least 4 characters long."
             )
 
-    async def create_user(self, create_user: CreateUserSchema) -> UserModel:
-        await self._validate_password(create_user.password)
+    async def create_user(self, user_create: CreateUserSchema) -> UserModel:
+        await self._validate_password(user_create.password)
+
+        try:
+            await self.get_by_email(user_create.email)
+            raise exceptions.UserAlreadyExists()
+        except exceptions.UserNotExists:
+            pass
 
         created_user = UserModel(
-            email=create_user.email,
-            hashed_password=self.password_helper.hash_password(create_user.password),
+            email=user_create.email,
+            hashed_password=self.password_helper.hash_password(user_create.password),
             )
         self._users.append(created_user)
         return created_user
-
-    async def update(self, user_update: UpdateUserSchema, user: UserModel) -> UserModel:
-        pass
-
-    async def delete(self, user: UserModel) -> UserModel:
-        pass
 
     async def authenticate(
             self,
             credentials: AuthCredentials
     ) -> Optional[UserModel]:
-        await self._validate_password(credentials.password)
-        return UserModel(
-            email=credentials.email,
-            hashed_password=self.password_helper.hash_password(credentials.password),
+        try:
+            user: UserModel = await self.get_by_email(credentials.email)
+        except exceptions.UserNotExists:
+            return None
+
+        verified = self.password_helper.verify_password(
+            credentials.password, user.hashed_password
         )
+        if not verified:
+            return None
+
+        return user
 
 
 @pytest.fixture
@@ -166,3 +189,25 @@ def inactive_user() -> UserModel:
         id=uuid.UUID("0cc735ff-39f8-4b63-b08e-c50a9adbf709"),
         is_active=False
     )
+
+
+def get_token(email: str="josh_test_email@test.com", password: str = "J0$h123456"):
+    res = client.post("/auth/login", json={"email": email, "password": password})
+    assert res.status_code == 200
+    data = res.json()
+    return f"{data['token_type']} {data['access_token']}"
+
+
+@pytest.fixture
+def test_client():
+    """
+    It's necessary to make router test works, due to beanie initialization error.
+    """
+    with TestClient(app) as client:
+        yield client
+
+
+@pytest.fixture
+def auth_client():
+    client.headers.update({"Authorization": get_token()})
+    return client

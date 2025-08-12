@@ -49,6 +49,8 @@ async def jwt_middleware(request: Request, call_next):
         return Response("INVALID_TOKEN", status_code=401)
 
     if is_token_expired(token):
+        token = BlacklistToken(token=token)
+        await token.insert()
         return Response("EXPIRED TOKEN", status_code=401)
 
     return await call_next(request)

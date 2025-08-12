@@ -1,21 +1,17 @@
-from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi import APIRouter, HTTPException, status
 
-from euro_cert_api.authtentication.authenticator import Authenticator
 from euro_cert_api.authtentication.backend import AuthenticationBackend
 from euro_cert_api.managers.user import UserManager
-from euro_cert_api.models.user import User
 from euro_cert_api.schemas.auth import AuthCredentials
+from euro_cert_api.common import exceptions
 
 
 def get_auth_router(
-    authenticator: Authenticator,
     authentication_backend: AuthenticationBackend,
     user_manager: UserManager
 ) -> APIRouter:
 
     router = APIRouter(prefix="/auth", tags=["auth"])
-    get_current_user_and_token = authenticator.get_current_user_and_token()
-
 
     @router.post("/login")
     async def login(credentials: AuthCredentials):
@@ -36,10 +32,21 @@ def get_auth_router(
         return await authentication_backend.login(user)
 
 
-    @router.post("/logout")
-    async def logout(user_and_token: tuple[User, str] = Depends(get_current_user_and_token)):
-        _, token = user_and_token
-        return await authentication_backend.logout(token)
+    @router.post("/register")
+    async def register(credentials: AuthCredentials):
+        try:
+            await user_manager.create(credentials)
 
+        except exceptions.UserAlreadyExists:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="User already exists.",
+            )
+
+        except exceptions.InvalidPasswordException as pass_e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid password {}.".format(pass_e.reason),
+            )
 
     return router

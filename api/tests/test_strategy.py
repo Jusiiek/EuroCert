@@ -1,5 +1,4 @@
 import pytest
-from pydantic import UUID4
 
 
 @pytest.mark.asyncio

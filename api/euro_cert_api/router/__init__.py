@@ -25,7 +25,6 @@ class Router:
 
     def get_auth_router(self):
         return get_auth_router(
-            self.authenticator,
             self.backend,
             self.user_manager
         )

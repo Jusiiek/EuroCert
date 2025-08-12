@@ -14,8 +14,8 @@ class User(Base):
 
     @classmethod
     async def get_by_id(cls, user_id: ObjectId):
-        return await cls.filter(id=user_id).first()
+        return await cls.find({"_id": ObjectId(user_id)}).first_or_none()
 
     @classmethod
     async def get_by_email(cls, email: str):
-        return await cls.filter(email=email).first()
+        return await cls.find({"email": email}).first_or_none()
