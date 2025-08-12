@@ -82,8 +82,11 @@ class UserManager:
         if not is_pass_valid:
             raise exceptions.InvalidPasswordException(', '.join(errors))
 
-        if await self.get_by_email(user_create.email):
+        try:
+            await self.get_by_email(user_create.email)
             raise exceptions.UserAlreadyExists()
+        except exceptions.UserNotExists:
+            pass
 
         user_dict = user_create.create_update_dict()
         user_dict["hashed_password"] = self.password_helper.hash_password(user_create.password)
