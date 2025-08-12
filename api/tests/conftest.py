@@ -93,6 +93,15 @@ class MockUserManager(UserManager):
 
     async def get_by_id(self, id: str) -> Optional[UserModel]:
         user = [u for u in self._users if str(u.id) == id][0] or None
+        if user is None:
+            raise exceptions.UserNotExists()
+        return user
+
+    async def get_by_email(self, email: str) -> Optional[UserModel]:
+        user = [u for u in self._users if u.email == email]
+        user = user[0] if len(user) > 0 else None
+        if user is None:
+            raise exceptions.UserNotExists()
         return user
 
     async def _validate_password(self, password: str) -> None:
@@ -101,12 +110,18 @@ class MockUserManager(UserManager):
                 "Password must be at least 4 characters long."
             )
 
-    async def create_user(self, create_user: CreateUserSchema) -> UserModel:
-        await self._validate_password(create_user.password)
+    async def create_user(self, user_create: CreateUserSchema) -> UserModel:
+        await self._validate_password(user_create.password)
+
+        try:
+            await self.get_by_email(user_create.email)
+            raise exceptions.UserAlreadyExists()
+        except exceptions.UserNotExists:
+            pass
 
         created_user = UserModel(
-            email=create_user.email,
-            hashed_password=self.password_helper.hash_password(create_user.password),
+            email=user_create.email,
+            hashed_password=self.password_helper.hash_password(user_create.password),
             )
         self._users.append(created_user)
         return created_user
@@ -115,11 +130,18 @@ class MockUserManager(UserManager):
             self,
             credentials: AuthCredentials
     ) -> Optional[UserModel]:
-        await self._validate_password(credentials.password)
-        return UserModel(
-            email=credentials.email,
-            hashed_password=self.password_helper.hash_password(credentials.password),
+        try:
+            user: UserModel = await self.get_by_email(credentials.email)
+        except exceptions.UserNotExists:
+            return None
+
+        verified = self.password_helper.verify_password(
+            credentials.password, user.hashed_password
         )
+        if not verified:
+            return None
+
+        return user
 
 
 @pytest.fixture
