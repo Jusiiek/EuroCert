@@ -8,8 +8,9 @@ requirements = """
 annotated-types==0.7.0
 anyio==4.10.0
 beanie==2.0.0
-bcrypt==4.3.0
+bcrypt==4.0.1
 fastapi==0.116.1
+httpx==0.28.1
 idna==3.10
 motor==3.7.1
 passlib==1.7.4
