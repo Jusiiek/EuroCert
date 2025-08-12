@@ -1,4 +1,5 @@
 import uuid
+import asyncio
 import dataclasses
 from typing import Optional, List, Any
 
@@ -6,6 +7,7 @@ import pytest
 from pydantic import UUID4
 from fastapi.security.base import SecurityBase
 from fastapi import Request
+from fastapi.testclient import TestClient
 
 from euro_cert_api.managers.user import UserManager
 from euro_cert_api.authtentication.authenticator import Authenticator
@@ -14,9 +16,14 @@ from euro_cert_api.authtentication.backend import AuthenticationBackend
 from euro_cert_api.authtentication.strategy.jwt import JWTStrategy
 from euro_cert_api.models.user import User
 from euro_cert_api.utils.password import PasswordHelper
-from euro_cert_api.schemas.user import CreateUserSchema, UpdateUserSchema
+from euro_cert_api.schemas.user import CreateUserSchema
 from euro_cert_api.schemas.auth import AuthCredentials
 from euro_cert_api.common import exceptions
+from euro_cert_api.app import app
+
+
+loop = asyncio.get_event_loop()
+client = TestClient(app)
 
 
 IDType = UUID4
@@ -104,12 +111,6 @@ class MockUserManager(UserManager):
         self._users.append(created_user)
         return created_user
 
-    async def update(self, user_update: UpdateUserSchema, user: UserModel) -> UserModel:
-        pass
-
-    async def delete(self, user: UserModel) -> UserModel:
-        pass
-
     async def authenticate(
             self,
             credentials: AuthCredentials
@@ -166,3 +167,25 @@ def inactive_user() -> UserModel:
         id=uuid.UUID("0cc735ff-39f8-4b63-b08e-c50a9adbf709"),
         is_active=False
     )
+
+
+def get_token(email: str="josh_test_email@test.com", password: str = "J0$h123456"):
+    res = client.post("/auth/login", json={"email": email, "password": password})
+    assert res.status_code == 200
+    data = res.json()
+    return f"{data['token_type']} {data['access_token']}"
+
+
+@pytest.fixture
+def test_client():
+    """
+    It's necessary to make router test works, due to beanie initialization error.
+    """
+    with TestClient(app) as client:
+        yield client
+
+
+@pytest.fixture
+def auth_client():
+    client.headers.update({"Authorization": get_token()})
+    return client
