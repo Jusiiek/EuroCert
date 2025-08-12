@@ -57,15 +57,12 @@ def create_app(lifespan) -> FastAPI:
         expose_headers=["*"]
     )
 
+    app.include_router(router.get_auth_router())
+
     return app
 
 
 app = create_app(lifespan=lifespan)
-
-
-def get_app_routers() -> None:
-    app.include_router(router.get_auth_router())
-
 
 
 def run_dev_server():

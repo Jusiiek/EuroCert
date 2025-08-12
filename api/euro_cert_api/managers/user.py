@@ -83,8 +83,8 @@ class UserManager:
         user_dict = user_create.create_update_dict()
         user_dict["hashed_password"] = self.password_helper.hash_password(user_create.password)
         del user_dict["password"]
-        user = await User.create(**user_dict)
-        return user
+        user = User(**user_dict)
+        return await user.insert()
 
     async def update(self, user_update: UpdateUserSchema, user: User) -> User:
         update_dict = user_update.create_update_dict()
