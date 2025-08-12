@@ -1,6 +1,6 @@
 import re
 
-from typing import Any, Optional
+from typing import Optional
 from bson import ObjectId
 
 from euro_cert_api.models.user import User
@@ -8,32 +8,14 @@ from euro_cert_api.utils.password import PasswordHelper
 from euro_cert_api.common import exceptions
 from euro_cert_api.schemas.user import CreateUserSchema
 from euro_cert_api.schemas.auth import AuthCredentials
+from euro_cert_api.managers.base import BaseManager
 
 
-class UserManager:
+class UserManager(BaseManager):
 
     def __init__(self, password_helper: PasswordHelper = None):
+        super(self, UserManager).__init__()
         self.password_helper = password_helper or PasswordHelper()
-
-    def parse_id(self, id: Any) -> ObjectId:
-        """
-        Parse a value into a correct ID type.
-
-        Params
-        -------------------
-        id: Any - model id as different type
-
-        Returns
-        --------------
-        id: ObjectId - Model correct ID
-        """
-
-        if isinstance(id, ObjectId):
-            return id
-        try:
-            return ObjectId(id)
-        except Exception as e:
-            raise e
 
     async def _validate_password(self, password: str) -> tuple[list, bool]:
         """

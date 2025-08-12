@@ -20,3 +20,7 @@ class UserNotExists(EuroCertException):
 class InvalidPasswordException(EuroCertException):
     def __init__(self, reason: Any) -> None:
         self.reason = reason
+
+
+class TaskNotExists(EuroCertException):
+    pass
