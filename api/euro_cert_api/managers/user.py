@@ -116,4 +116,15 @@ class UserManager:
         self,
         credentials: AuthCredentials
     ) -> Optional[User]:
-        pass
+        try:
+            user: User = await self.get_by_email(credentials.email)
+        except exceptions.UserNotExists:
+            return None
+
+        verified = self.password_helper.verify_password(
+            credentials.password, user.hashed_password
+        )
+        if not verified:
+            return None
+
+        return user
