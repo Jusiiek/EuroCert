@@ -10,4 +10,4 @@ class BlacklistToken(Base):
 
     @classmethod
     async def get_by_token(cls, token: str):
-        return await cls.filter(token=token).first()
+        return await cls.find({"token": token}).first_or_none()
