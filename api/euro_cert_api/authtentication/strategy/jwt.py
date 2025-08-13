@@ -26,7 +26,11 @@ class JWTStrategy:
         self.audience = audience
         self.algorithm = algorithm
 
-    async def read_token(self, token: Optional[str], user_manager: UserManager) -> Optional[User]:
+    async def read_token(
+            self,
+            token: Optional[str],
+            user_manager: UserManager
+    ) -> Optional[User]:
         if token is None:
             return None
 

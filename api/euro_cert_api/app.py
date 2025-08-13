@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
     await init_db()
     print("Database initialized")
 
-    yield # replaces try finally
+    yield  # replaces try finally
 
     print("Shutting down...")
 

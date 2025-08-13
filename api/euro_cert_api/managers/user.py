@@ -40,8 +40,10 @@ class UserManager:
 
         Validates a password
         :param password: str - The password to validate
-        :returns result: tuple[list, bool] list of errors, is_password_valid - The error list stores all
-        the missing password features, is_password_valid is just a bool value if password is valid or not
+        :returns result: tuple[list, bool] list of errors,
+        is_password_valid - The error list stores all
+        the missing password features,
+        is_password_valid is just a bool value if password is valid or not
 
         """
         errors = []
@@ -89,7 +91,9 @@ class UserManager:
             pass
 
         user_dict = user_create.create_update_dict()
-        user_dict["hashed_password"] = self.password_helper.hash_password(user_create.password)
+        user_dict["hashed_password"] = (
+            self.password_helper.hash_password(user_create.password)
+        )
         del user_dict["password"]
         user = User(**user_dict)
         return await user.insert()
