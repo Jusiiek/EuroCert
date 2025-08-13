@@ -38,7 +38,7 @@ async def lifespan(app: FastAPI):
     await init_db()
     print("Database initialized")
 
-    yield # replaces try finally
+    yield  # replaces try finally
 
     print("Shutting down...")
 
@@ -58,6 +58,7 @@ def create_app(lifespan) -> FastAPI:
     )
 
     app.include_router(router.get_auth_router())
+    app.include_router(router.get_tasks_router())
 
     return app
 

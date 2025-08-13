@@ -2,6 +2,7 @@ from euro_cert_api.authtentication.authenticator import Authenticator
 from euro_cert_api.authtentication.backend import AuthenticationBackend
 from euro_cert_api.managers.user import UserManager
 from euro_cert_api.router.auth import get_auth_router
+from euro_cert_api.router.tasks import get_tasks_router
 
 
 class Router:
@@ -26,5 +27,11 @@ class Router:
     def get_auth_router(self):
         return get_auth_router(
             self.backend,
+            self.user_manager
+        )
+
+    def get_tasks_router(self):
+        return get_tasks_router(
+            self.authenticator,
             self.user_manager
         )

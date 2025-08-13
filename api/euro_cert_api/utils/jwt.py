@@ -6,7 +6,7 @@ from typing import Union, Optional, Any
 
 
 SecretType = Union[str, SecretStr]
-JWT_ALGORITHM= "HS256"
+JWT_ALGORITHM = "HS256"
 
 
 def _get_secret_value(secret: SecretType) -> str:
@@ -31,12 +31,12 @@ def generate_jwt(
 def decode_jwt(
     encoded_jwt: str,
     secret: SecretType,
-    audience: list[str],
+    audience: str,
     algorithms: list[str] = [JWT_ALGORITHM],
 ) -> dict[str, Any]:
     return jwt.decode(
-        encoded_jwt,
-        _get_secret_value(secret),
+        token=encoded_jwt,
+        key=_get_secret_value(secret),
         audience=audience,
         algorithms=algorithms
     )

@@ -3,6 +3,7 @@ from beanie import init_beanie
 
 from euro_cert_api.models.user import User
 from euro_cert_api.models.blacklist_token import BlacklistToken
+from euro_cert_api.models.task import Task
 from euro_cert_api.config import MONGO_URL, DB_NAME
 
 
@@ -11,7 +12,7 @@ async def reset_db():
     Resets whole database
     """
 
-    collections = [User, BlacklistToken]
+    collections = [User, BlacklistToken, Task]
     client = AsyncIOMotorClient(MONGO_URL)
 
     await client.drop_database(DB_NAME)
@@ -31,5 +32,5 @@ async def init_db():
     db = client["euro_cert"]
     await init_beanie(
         database=db,
-        document_models=[User, BlacklistToken]
+        document_models=[User, BlacklistToken, Task]
     )

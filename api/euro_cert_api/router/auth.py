@@ -31,7 +31,6 @@ def get_auth_router(
 
         return await authentication_backend.login(user)
 
-
     @router.post("/register")
     async def register(credentials: AuthCredentials):
         try:

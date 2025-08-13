@@ -18,7 +18,7 @@ class JWTStrategy:
         self,
         secret: SecretType,
         lifetime: Optional[int],
-        audience: list[str] = ["euro_cert:auth"],
+        audience: str = "euro_cert:auth",
         algorithm: str = JWT_ALGORITHM
     ):
         self.secret = secret
@@ -26,7 +26,11 @@ class JWTStrategy:
         self.audience = audience
         self.algorithm = algorithm
 
-    async def read_token(self, token: Optional[str], user_manager: UserManager) -> Optional[User]:
+    async def read_token(
+            self,
+            token: Optional[str],
+            user_manager: UserManager
+    ) -> Optional[User]:
         if token is None:
             return None
 

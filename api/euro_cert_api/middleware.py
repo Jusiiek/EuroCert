@@ -1,7 +1,6 @@
 from datetime import datetime, timezone
 
 from fastapi import Request, Response
-from jose import JWTError
 
 from euro_cert_api.config import (
     SECRET_KEY,
@@ -30,7 +29,8 @@ def is_token_expired(token: str) -> bool:
         now = datetime.now(timezone.utc).timestamp()
         return now > exp
 
-    except JWTError:
+    except Exception as e:
+        print("MIDDLEWARE TOKEN EXPIRED", e)
         return True
 
 
