@@ -191,7 +191,11 @@ def inactive_user() -> UserModel:
     )
 
 
-def get_token(email: str="josh_test_email@test.com", password: str = "J0$h123456"):
+def get_token(
+        client: TestClient,
+        email: str="josh_test_email@test.com",
+        password: str = "J0$h123456"
+):
     res = client.post("/auth/login", json={"email": email, "password": password})
     assert res.status_code == 200
     data = res.json()
@@ -209,5 +213,6 @@ def test_client():
 
 @pytest.fixture
 def auth_client():
-    client.headers.update({"Authorization": get_token()})
-    return client
+    with TestClient(app) as client:
+        client.headers.update({"Authorization": get_token(client)})
+        yield client

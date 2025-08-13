@@ -2,6 +2,7 @@ from datetime import datetime
 
 from bson import ObjectId
 from typing import Optional
+from pydantic import Field
 
 from euro_cert_api.models.base import Base
 
@@ -10,8 +11,8 @@ class Task(Base):
     title: str
     description: Optional[str]
     user_id: ObjectId
-    created_at: datetime = datetime.now()
-    updated_at: datetime = datetime.now()
+    created_at: datetime = Field(default_factory=datetime.now)
+    updated_at: datetime = Field(default_factory=datetime.now)
 
     class Settings:
         name = "tasks"

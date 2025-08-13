@@ -18,7 +18,7 @@ class JWTStrategy:
         self,
         secret: SecretType,
         lifetime: Optional[int],
-        audience: list[str] = ["euro_cert:auth"],
+        audience: str = "euro_cert:auth",
         algorithm: str = JWT_ALGORITHM
     ):
         self.secret = secret

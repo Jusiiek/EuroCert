@@ -1,9 +1,10 @@
 from bson import ObjectId
 from beanie import Document
+from pydantic import ConfigDict
 
 
 class Base(Document):
-
-    class Config:
-        populate_defaults = True
-        json_loads = {ObjectId: str}
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        json_encoders={ObjectId: str}
+    )
