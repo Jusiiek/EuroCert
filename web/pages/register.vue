@@ -1,5 +1,12 @@
 <template>
-  <AuthForm title="Register" buttonText="Sign Up" @submit="handleRegister" />
+  <div class="w-screen h-screen flex items-center justify-center">
+    <AuthForm
+        title="Register"
+        buttonText="Sign Up"
+        @submit="handleRegister"
+        class="max-w-[600px] w-full"
+    />
+  </div>
 </template>
 
 <script setup>

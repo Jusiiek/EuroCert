@@ -3,11 +3,9 @@
 </script>
 
 <template>
-  <UContainer>
-    <main class="py-6">
-      <slot />
-    </main>
-  </UContainer>
+  <main class="py-6">
+    <slot/>
+  </main>
 </template>
 
 
