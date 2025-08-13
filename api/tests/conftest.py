@@ -54,12 +54,16 @@ class MockTransport(Transport):
 
 class MockStrategy(JWTStrategy):
 
-    async def read_token(self, token: Optional[str], user_manager: UserManager) -> Optional[User]:
+    async def read_token(
+            self,
+            token: Optional[str],
+            user_manager: UserManager
+    ) -> Optional[User]:
         if token is not None:
             try:
                 parsed_id = user_manager.parse_id(token)
                 return await user_manager.get_by_id(parsed_id)
-            except Exception as e:
+            except Exception:
                 return None
         return None
 
@@ -121,8 +125,8 @@ class MockUserManager(UserManager):
 
         created_user = UserModel(
             email=user_create.email,
-            hashed_password=self.password_helper.hash_password(user_create.password),
-            )
+            hashed_password=self.password_helper.hash_password(user_create.password)
+        )
         self._users.append(created_user)
         return created_user
 
@@ -146,10 +150,7 @@ class MockUserManager(UserManager):
 
 @pytest.fixture
 def strategy() -> JWTStrategy:
-    return MockStrategy(
-        "secret",
-        60*60*24
-    )
+    return MockStrategy("secret", 60 * 60 * 24)
 
 
 @pytest.fixture
@@ -193,7 +194,7 @@ def inactive_user() -> UserModel:
 
 def get_token(
         client: TestClient,
-        email: str="josh_test_email@test.com",
+        email: str = "josh_test_email@test.com",
         password: str = "J0$h123456"
 ):
     res = client.post("/auth/login", json={"email": email, "password": password})

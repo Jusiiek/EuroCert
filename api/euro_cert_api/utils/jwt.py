@@ -6,7 +6,7 @@ from typing import Union, Optional, Any
 
 
 SecretType = Union[str, SecretStr]
-JWT_ALGORITHM= "HS256"
+JWT_ALGORITHM = "HS256"
 
 
 def _get_secret_value(secret: SecretType) -> str:
