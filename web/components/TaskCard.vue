@@ -2,6 +2,7 @@
 import {ref} from 'vue'
 
 interface Props {
+  id: string
   title: string
   description?: string
 }

@@ -2,7 +2,7 @@ import click
 import asyncio
 from functools import wraps
 
-from euro_cert_api.utils.fixtures import load_users
+from euro_cert_api.utils.fixtures import load_users, load_tasks
 from euro_cert_api.db import reset_db, init_db
 
 
@@ -31,6 +31,7 @@ async def reset_database():
 async def load_fixtures():
     await init_db()
     await load_users()
+    await load_tasks()
 
 
 if __name__ == "__main__":

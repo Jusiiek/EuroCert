@@ -27,7 +27,7 @@ async def test_successful_get_list_and_update(auth_client):
     assert res.status_code == 200
     data = res.json()
     assert isinstance(data, list)
-    assert len(data) == 1
+    assert len(data) == 3
     task_to_update = data[0]
 
     update_data = {**get_task_body(), "description": "Updated description"}
@@ -50,8 +50,8 @@ async def test_successful_task_removal(auth_client):
     assert res.status_code == 200
     data = res.json()
     assert isinstance(data, list)
-    assert len(data) == 1
-    task_to_delete = data[0]
+    assert len(data) == 3
+    task_to_delete = data[-1]
 
     res = auth_client.delete(
         "/tasks/{}".format(task_to_delete["_id"]),
