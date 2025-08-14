@@ -2,12 +2,9 @@ import type { RequestParams, RequestResponse } from "~/interfaces/request";
 import { useAuth } from "~/composables/useAuth";
 
 export const redirectIfNotAuthenticated = (res: Response) => {
-  if (res.status === 401) {
-    const {logout} = useAuth();
-    logout();
-    return window.location.replace("/login");
-  }
-  if (res.status === 403) return window.location.replace("/");
+  const { logout, forbidden } = useAuth();
+  if (res.status === 401) logout();
+  if (res.status === 403) forbidden();
 };
 
 export const encodeQuery = (query: Record<string, any>) => {

@@ -54,10 +54,16 @@ export function useAuth() {
         }
     }
 
+    function forbidden() {
+        if (router) {
+            router.push('/');
+        }
+    }
+
     function getAuthToken() {
         if (!token.value) return "";
         return `${token.value.token_type} ${token.value.access_token}`;
     }
 
-    return {token, isAuthenticated, login, logout, getAuthToken};
+    return {token, isAuthenticated, login, logout, forbidden, getAuthToken};
 }
