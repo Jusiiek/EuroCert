@@ -58,7 +58,7 @@ np. gdy dane są zaciągane z api. np.
     <div v-else v-for="d in data">...</div>
 ```
 
-W przypadku naszego problemu wytarczy, że przypisanie nowych wartości umieścimy w onMounted
+W przypadku naszego problemu dotyczy currentTime i onlineTime. Wytarczy, że przypisanie nowych wartości umieścimy w onMounted
 
 ```vue
 <script setup>
