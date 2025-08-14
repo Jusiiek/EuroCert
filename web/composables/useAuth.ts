@@ -9,7 +9,7 @@ export const TOKEN_KEY = "euro_cert_token";
 const token = ref<TokenInterface | null>(null)
 
 export function useAuth() {
-    const router = useRouter();
+    const router = process.client ? useRouter() : null;
 
     if (process.client) {
         const stored = localStorage.getItem(TOKEN_KEY);
@@ -39,6 +39,9 @@ export function useAuth() {
                 token_type: data.token_type,
                 access_token: data.access_token
             });
+            if (router) {
+                router.push('/');
+            }
         }
 
         return {res, data};
@@ -46,7 +49,9 @@ export function useAuth() {
 
     function logout() {
         clearToken();
-        router.push('/login');
+        if (router) {
+            router.push('/login');
+        }
     }
 
     function getAuthToken() {
@@ -54,5 +59,5 @@ export function useAuth() {
         return `${token.value.token_type} ${token.value.access_token}`;
     }
 
-    return {token, isAuthenticated , login, logout, getAuthToken};
+    return {token, isAuthenticated, login, logout, getAuthToken};
 }

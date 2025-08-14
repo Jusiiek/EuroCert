@@ -8,25 +8,30 @@ const {tasks, taskCount, fetchTasks, updateTask, deleteTask, addTask} = useTasks
 const isFetching = ref(false)
 const showModal = ref(true)
 
-onMounted(async () => {
-  isFetching.value = true
-  try {
-    await fetchTasks()
-  } finally {
+async function getUserTasks() {
+    isFetching.value = true
+    await fetchTasks();
     isFetching.value = false
-  }
+}
+
+onMounted(async () => {
+  await getUserTasks();
 })
 
 async function handleTaskCreation(createdBody: CreateUpdateTaskInterface) {
   await addTask(createdBody)
+  await getUserTasks();
 }
 
 async function handleTaskUpdated(taskId: string, updatedBody: CreateUpdateTaskInterface) {
   await updateTask(taskId, updatedBody)
+  await getUserTasks();
+
 }
 
 async function handleDeleteTask(taskId: string) {
   await deleteTask(taskId)
+  await getUserTasks();
 }
 
 definePageMeta({

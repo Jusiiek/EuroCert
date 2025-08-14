@@ -31,14 +31,12 @@ export function useTasks() {
         const { res, data } = result;
         if (res.status === 200) {
             alert(`Task ${action} successfully.`);
-            await fetchTasks();
             return
         }
         alert(`Something went wrong. ${data.detail}`);
     }
 
     const taskCount = computed(() => tasks.value.length);
-    const taskList = computed(() => tasks.value);
 
     return {tasks, taskCount, fetchTasks, addTask, updateTask, deleteTask};
 }

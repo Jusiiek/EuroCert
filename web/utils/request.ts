@@ -5,6 +5,7 @@ export const redirectIfNotAuthenticated = (res: Response) => {
   if (res.status === 401) {
     const {logout} = useAuth();
     logout();
+    return window.location.replace("/login");
   }
   if (res.status === 403) return window.location.replace("/");
 };
