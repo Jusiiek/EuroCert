@@ -3,6 +3,7 @@ import json
 
 from euro_cert_api.config import FIXTURES_PATH
 from euro_cert_api.models.user import User
+from euro_cert_api.models.task import Task
 from euro_cert_api.utils.password import PasswordHelper
 
 
@@ -19,3 +20,29 @@ async def load_users():
         del user["password"]
         user = User(**user)
         await user.insert()
+
+
+async def load_tasks():
+    josh = await User.get_by_email("josh_test_email@test.com")
+    eli = await User.get_by_email("elisabeth_test_email@test.com")
+
+    task = Task(
+        title="Test josh task",
+        description="Test josh task",
+        user_id=josh.id
+    )
+    await task.insert()
+
+    task = Task(
+        title="Test second josh task",
+        description="Test second josh task",
+        user_id=josh.id
+    )
+    await task.insert()
+
+    task = Task(
+        title="Test eli task",
+        description="Test eli task",
+        user_id=eli.id
+    )
+    await task.insert()

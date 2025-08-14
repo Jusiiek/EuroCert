@@ -3,6 +3,9 @@
     <AuthForm
         title="Login"
         buttonText="Sign In"
+        linkLabel="Dont have an account? Create now!"
+        linkTarget="/register"
+        :is-login-view="true"
         @submit="handleLogin"
         class="max-w-[600px] w-full"
     />
@@ -10,14 +13,23 @@
 </template>
 
 <script setup>
+import { useAuth } from "~/composables/useAuth";
+
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'auth'
 })
 
-function handleLogin(data) {
-  console.log("Login data:", data)
-  // TODO: handle login
+const { login } = useAuth();
+
+async function handleLogin(loginData) {
+  const { res, data } = await login(loginData);
+  if (res.status !== 200) {
+    alert(`Login failed: ${data.detail}`)
+  }
+
 }
+
 </script>
 
 <style scoped>
