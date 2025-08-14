@@ -1,13 +1,14 @@
+import {ActiveUser} from "~/services/active_user";
+
 export default defineNuxtRouteMiddleware((to, from) => {
+    const publicPages = ['/login', '/register'];
+    const token = ActiveUser.getToken();
 
-    const publicPages = ['/login', '/register']
-
-    if (publicPages.includes(to.path)) {
-        return
+    if (publicPages.includes(to.path) && token) {
+        if (to.path !== '/') return navigateTo('/');
     }
 
-    const token = process.client ? localStorage.getItem('token') : null
-    if (!token) {
-        return navigateTo('/login')
+    if (!token && !publicPages.includes(to.path)) {
+        return navigateTo('/login');
     }
-})
+});

@@ -31,6 +31,11 @@
         <div class="w-full flex justify-center">
           <UButton type="submit" class="mt-4 w-auto px-6">{{ buttonText }}</UButton>
         </div>
+        <div class="w-full flex justify-center mt-2">
+          <NuxtLink :to="linkTarget" class="hover:text-[#05df72]">
+            {{ linkLabel }}
+          </NuxtLink>
+        </div>
       </UForm>
     </UCard>
   </div>
@@ -39,7 +44,9 @@
 <script setup>
 const props = defineProps({
   title: String,
-  buttonText: String
+  buttonText: String,
+  linkLabel: String,
+  linkTarget: String,
 })
 
 const emit = defineEmits(["submit"])
