@@ -22,7 +22,7 @@ export function useTasks() {
         await showResult({res, data}, "updated");
     }
 
-    async function removeTask(id: string) {
+    async function deleteTask(id: string) {
         const { res, data } = await TaskService.deleteTask(id);
         await showResult({res, data}, "deleted");
     }
@@ -37,5 +37,5 @@ export function useTasks() {
         alert(`Something went wrong. ${data.detail}`);
     }
 
-    return {tasks, fetchTasks, addTask, updateTask, removeTask};
+    return {tasks, fetchTasks, addTask, updateTask, deleteTask};
 }

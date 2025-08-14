@@ -41,8 +41,8 @@ definePageMeta({
       <div v-else class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 p-4">
         <TaskCard
             v-for="task in tasks"
-            :key="task.id"
-            :id="task.id"
+            :key="task._id"
+            :id="task._id"
             :title="task.title"
             :description="task.description"
         />

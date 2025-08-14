@@ -4,6 +4,6 @@ export interface CreateUpdateTaskInterface {
 }
 
 export interface TaskInterface extends CreateUpdateTaskInterface {
-    id: string;
+    _id: string;
 }
 
