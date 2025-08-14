@@ -21,6 +21,12 @@ async function submitForm() {
   open.value = false;
 }
 
+async function cancel() {
+  form.title = "";
+  form.description = "";
+  open.value = false;
+}
+
 </script>
 
 <template>
@@ -59,6 +65,13 @@ async function submitForm() {
               }"
           >
             Create task
+          </UButton>
+            <UButton
+              color="error"
+              class="ml-3 mt-4 w-auto px-6 cursor-pointer"
+              @click="cancel"
+          >
+            Cancel
           </UButton>
           </div>
 

@@ -4,14 +4,17 @@ import {ref, onMounted} from 'vue'
 import {useTasks} from "~/composables/useTasks";
 import type {CreateUpdateTaskInterface} from "~/interfaces/task";
 
+definePageMeta({
+  middleware: 'guest'
+})
+
 const {tasks, taskCount, fetchTasks, updateTask, deleteTask, addTask} = useTasks()
 const isFetching = ref(false)
-const showModal = ref(true)
 
 async function getUserTasks() {
-    isFetching.value = true
-    await fetchTasks();
-    isFetching.value = false
+  isFetching.value = true
+  await fetchTasks();
+  isFetching.value = false
 }
 
 onMounted(async () => {
@@ -34,10 +37,6 @@ async function handleDeleteTask(taskId: string) {
   await getUserTasks();
 }
 
-definePageMeta({
-  middleware: 'guest'
-})
-
 </script>
 
 <template>
@@ -46,11 +45,7 @@ definePageMeta({
       <div class="flex-1 text-center">
         <span v-if="!isFetching" class="text-xl">You have: {{ taskCount }}</span>
       </div>
-      <task-creation-modal
-          :show="showModal"
-          @close="() => showModal = false"
-          @submit="handleTaskCreation"
-      />
+      <task-creation-modal @submit="handleTaskCreation"/>
     </div>
     <div
         v-if="isFetching"

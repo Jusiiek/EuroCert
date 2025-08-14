@@ -7,9 +7,9 @@ import Navbar from "~/components/Navbar.vue";
   <div>
     <Navbar/>
     <UContainer>
-      <main class="py-6">
+      <div class="py-6">
         <slot/>
-      </main>
+      </div>
     </UContainer>
   </div>
 
