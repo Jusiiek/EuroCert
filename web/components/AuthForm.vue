@@ -22,7 +22,7 @@
           <UInput
               id="password"
               v-model="form.password"
-              :color="color"
+              :color="showPasswordStrength ? color : 'success'"
               :type="showPassword ? 'text' : 'password'"
               :ui="{ trailing: 'pe-1' }"
               placeholder="Enter your password"
@@ -45,12 +45,12 @@
         </UFormGroup>
 
 
-        <div v-if="form.password && form.password.length > 0">
+        <div v-if="form.password && form.password.length > 0 && showPasswordStrength">
           <UProgress
               :color="color"
               :indicator="text"
               :model-value="score"
-              :max="4"
+              :max="5"
               size="sm"
           />
 
@@ -105,6 +105,10 @@ const props = defineProps({
   buttonText: String,
   linkLabel: String,
   linkTarget: String,
+  showPasswordStrength: {
+    type: Boolean,
+    default: false
+  }
 })
 
 const emit = defineEmits(["submit"])
@@ -132,15 +136,15 @@ const score = computed(() => strength.value.filter(req => req.met).length)
 const color = computed(() => {
   if (score.value === 0) return 'neutral'
   if (score.value <= 1) return 'error'
-  if (score.value <= 2) return 'warning'
-  if (score.value === 3) return 'warning'
+  if (score.value <= 3) return 'warning'
+  if (score.value === 4) return 'warning'
   return 'success'
 })
 
 const text = computed(() => {
   if (score.value === 0) return 'Enter a password'
-  if (score.value <= 2) return 'Weak password'
-  if (score.value === 3) return 'Medium password'
+  if (score.value <= 3) return 'Weak password'
+  if (score.value === 4) return 'Medium password'
   return 'Strong password'
 })
 

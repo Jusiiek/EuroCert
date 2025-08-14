@@ -5,6 +5,7 @@
         buttonText="Sign Up"
         linkLabel="Already have an account? Login!"
         linkTarget="/login"
+        :showPasswordStrength="true"
         @submit="handleRegister"
         class="max-w-[600px] w-full"
     />
