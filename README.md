@@ -1,5 +1,9 @@
 # EuroCert
-Zadanie od EuroCert
+
+Aby postawić projekt lokalnie, prosze kierować się Readme z web i api 
+
+[WEB](https://github.com/Jusiiek/EuroCert/blob/main/web/README.md),
+[API](https://github.com/Jusiiek/EuroCert/blob/main/api/README.md).
 
 
 ## Hydration error
@@ -77,8 +81,3 @@ const completedTasks = computed(() => tasks.value.filter(t => t.completed).lengt
 const totalTasks = computed(() => tasks.value.length)
 </script>
 ```
-
-Aby postawić projekt lokalnie, prosze kierować się Readme z web i api 
-
-[WEB](https://github.com/Jusiiek/EuroCert/blob/main/web/README.md),
-[API](https://github.com/Jusiiek/EuroCert/blob/main/api/README.md).
