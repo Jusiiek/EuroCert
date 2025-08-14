@@ -5,5 +5,5 @@ export interface AuthInterface {
 
 export interface TokenInterface {
     access_token: string;
-    token_type: string
+    token_type: string;
 }
