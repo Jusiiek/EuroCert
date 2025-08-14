@@ -16,7 +16,8 @@ import { AuthServices } from "~/services/auth.js";
 import { useRouter } from "vue-router";
 
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'auth'
 })
 
 const router = useRouter();

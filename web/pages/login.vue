@@ -12,24 +12,21 @@
 </template>
 
 <script setup>
-import { AuthServices } from "~/services/auth";
-import { useRouter } from 'vue-router';
 import { useAuth } from "~/composables/useAuth";
 
 definePageMeta({
-  layout: 'auth'
+  layout: 'auth',
+  middleware: 'auth'
 })
 
-const router = useRouter();
 const { login } = useAuth();
 
 async function handleLogin(loginData) {
   const { res, data } = await login(loginData);
-  if (res.status === 200) {
-    router.push('/')
-    return
+  if (res.status !== 200) {
+    alert(`Login failed: ${data.detail}`)
   }
-  alert(`Login failed: ${data.detail}`)
+
 }
 
 </script>

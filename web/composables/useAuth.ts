@@ -1,34 +1,35 @@
 import {ref, computed} from "vue";
 import {useRouter} from "vue-router";
-import type {AuthInterface} from "~/interfaces/auth";
+import type {AuthInterface, TokenInterface} from "~/interfaces/auth";
 import {AuthServices} from "~/services/auth";
 
-export interface TokenInterface {
-    access_token: string;
-    token_type: string
-}
 
 export const TOKEN_KEY = "euro_cert_token";
 
-const token = ref<TokenInterface | null>(
-    localStorage.getItem(TOKEN_KEY)
-        ? JSON.parse(localStorage.getItem(TOKEN_KEY) as string)
-        : null
-);
+const token = ref<TokenInterface | null>(null)
 
 export function useAuth() {
     const router = useRouter();
 
-    const isLoggedIn = computed(() => !!token.value?.access_token);
+    if (process.client) {
+        const stored = localStorage.getItem(TOKEN_KEY);
+        token.value = stored ? JSON.parse(stored) as TokenInterface : null;
+    }
+
+    const isAuthenticated = computed(() => !!token.value?.access_token);
 
     function setToken(newToken: TokenInterface) {
-        token.value = newToken;
-        localStorage.setItem('authToken', JSON.stringify(newToken));
+        if (process.client) {
+            token.value = newToken;
+            localStorage.setItem(TOKEN_KEY, JSON.stringify(newToken));
+        }
     }
 
     function clearToken() {
-        token.value = null;
-        localStorage.removeItem(TOKEN_KEY);
+        if (process.client) {
+            token.value = null;
+            localStorage.removeItem(TOKEN_KEY);
+        }
     }
 
     async function login(credentials: AuthInterface) {
@@ -53,5 +54,5 @@ export function useAuth() {
         return `${token.value.token_type} ${token.value.access_token}`;
     }
 
-    return {token, isLoggedIn, login, logout, getAuthToken};
+    return {token, isAuthenticated , login, logout, getAuthToken};
 }
