@@ -12,17 +12,19 @@
 </template>
 
 <script setup>
-import { AuthServices } from "~/services/auth.js";
+import { AuthServices } from "~/services/auth";
 import { useRouter } from 'vue-router';
+import { useAuth } from "~/composables/useAuth";
 
 definePageMeta({
   layout: 'auth'
 })
 
 const router = useRouter();
+const { login } = useAuth();
 
 async function handleLogin(loginData) {
-  const { res, data } = await AuthServices.login(loginData);
+  const { res, data } = await login(loginData);
   if (res.status === 200) {
     router.push('/')
     return

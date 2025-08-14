@@ -1,10 +1,10 @@
 import type { RequestParams, RequestResponse } from "~/interfaces/request";
-import { ActiveUser } from "~/services/active_user";
+import { useAuth } from "~/composables/useAuth";
 
 export const redirectIfNotAuthenticated = (res: Response) => {
   if (res.status === 401) {
-    ActiveUser.clear();
-    return window.location.replace("/login");
+    const {logout} = useAuth();
+    logout();
   }
   if (res.status === 403) return window.location.replace("/");
 };
@@ -30,6 +30,8 @@ export const request = async ({
     headers["Content-Type"] = "application/json";
   }
 
+  const { getAuthToken } = useAuth();
+
   let requestBody: BodyInit | null | undefined = undefined;
   if (formData) {
     requestBody = formData;
@@ -40,10 +42,9 @@ export const request = async ({
       requestBody = body as BodyInit;
     }
   }
-  const token = ActiveUser.getToken()
-  const tokenType = ActiveUser.getTokenType()
-  if (token && tokenType) {
-    headers.Authorization = `${tokenType} ${token}`;
+  const token = getAuthToken();
+  if (token) {
+    headers.Authorization = token;
   }
 
   if (query) {
@@ -57,9 +58,9 @@ export const request = async ({
     ...rest,
   });
 
-  // if (!skipRedirect) {
-  //   redirectIfNotAuthenticated(res);
-  // }
+  if (!skipRedirect) {
+    redirectIfNotAuthenticated(res);
+  }
 
   const contentType = res.headers.get("content-type");
   if (contentType !== "application/json" || res.status === 204) {
