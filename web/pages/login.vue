@@ -5,6 +5,7 @@
         buttonText="Sign In"
         linkLabel="Dont have an account? Create now!"
         linkTarget="/register"
+        :is-login-view="true"
         @submit="handleLogin"
         class="max-w-[600px] w-full"
     />

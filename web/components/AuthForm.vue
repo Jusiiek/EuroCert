@@ -81,9 +81,9 @@
           <UButton
               type="submit"
               class="mt-4 w-auto px-6"
-              :disabled="!(form.email.length > 0 && form.password.length > 0)"
+              :disabled="isActionButtonDisabled"
               :class="{
-                'cursor-pointer': form.email.length > 0 && form.password.length > 0
+                'cursor-pointer': !isActionButtonDisabled
               }"
           >
             {{ buttonText }}
@@ -106,6 +106,10 @@ const props = defineProps({
   linkLabel: String,
   linkTarget: String,
   showPasswordStrength: {
+    type: Boolean,
+    default: false
+  },
+  isLoginView: {
     type: Boolean,
     default: false
   }
@@ -132,6 +136,15 @@ function checkStrength(str) {
 
 const strength = computed(() => checkStrength(form.password))
 const score = computed(() => strength.value.filter(req => req.met).length)
+const isEmailValid = computed(() => {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)
+})
+const isActionButtonDisabled = computed(() => {
+  if (!form.email || !form.password) return true
+  if (!isEmailValid.value) return true
+  if (!props.isLoginView && score.value < 5) return true
+  return false
+})
 
 const color = computed(() => {
   if (score.value === 0) return 'neutral'
@@ -150,7 +163,17 @@ const text = computed(() => {
 
 
 function submitForm() {
-  if (form.email.length > 0 && form.password.length > 0) emit("submit", {...form})
+  if (!isEmailValid.value) {
+    alert("Email is invalid");
+    return
+  }
+
+  else if (!props.isLoginView && score < 5) {
+    alert("Password is invalid");
+    return
+  }
+
+  emit("submit", {...form})
 }
 </script>
 
