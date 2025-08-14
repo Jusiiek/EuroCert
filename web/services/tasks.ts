@@ -7,7 +7,7 @@ class Tasks {
 
     async createTask(body: CreateUpdateTaskInterface): Promise<ServiceReturnInterface> {
         return await request({
-            url: `${getApiUrl()}/tasks`,
+            url: `${getApiUrl()}/tasks/`,
             method: "POST",
             body
         })
@@ -30,7 +30,7 @@ class Tasks {
 
     async getUserTasks(): Promise<ServiceReturnInterface> {
         return await request({
-            url: `${getApiUrl()}/tasks`,
+            url: `${getApiUrl()}/tasks/`,
         })
     }
 }

@@ -5,7 +5,7 @@ import { TaskService } from "~/services/tasks";
 
 
 export function useTasks() {
-    const tasks = ref<Array<TaskInterface>>([]);
+    const tasks = ref<TaskInterface[]>([]);
 
     async function fetchTasks() {
         const { data } = await TaskService.getUserTasks();
@@ -37,5 +37,8 @@ export function useTasks() {
         alert(`Something went wrong. ${data.detail}`);
     }
 
-    return {tasks, fetchTasks, addTask, updateTask, deleteTask};
+    const taskCount = computed(() => tasks.value.length);
+    const taskList = computed(() => tasks.value);
+
+    return {tasks, taskCount, fetchTasks, addTask, updateTask, deleteTask};
 }

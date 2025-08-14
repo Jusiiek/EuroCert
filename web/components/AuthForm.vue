@@ -162,7 +162,7 @@ const text = computed(() => {
 })
 
 
-function submitForm() {
+async function submitForm() {
   if (!isEmailValid.value) {
     alert("Email is invalid");
     return

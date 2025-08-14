@@ -9,11 +9,12 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+const emit = defineEmits(["update", "delete"])
 
 const isEditing = ref(false)
 const editedTitle = ref(props.title)
 const editedDescription = ref(props.description || '')
-const {updateTask, deleteTask} = useTasks()
+const {} = useTasks()
 
 function startEditing() {
   isEditing.value = true
@@ -28,7 +29,7 @@ function cancelEditing() {
 async function removeTask() {
   const confirmed = window.confirm("Are you sure you want to delete this task?");
   if (!confirmed) return;
-    await deleteTask(props.id);
+    emit("delete", props.id)
 }
 
 async function saveTask() {
@@ -36,7 +37,10 @@ async function saveTask() {
     alert('Title cannot be empty!')
     return
   }
-  await updateTask(props.id, {title: editedTitle.value, description: editedDescription.value})
+  emit("update", props.id, {
+    title: editedTitle.value,
+    description: editedDescription.value,
+  })
   isEditing.value = false
 }
 </script>
